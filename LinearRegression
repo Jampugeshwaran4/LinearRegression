@@ -1,0 +1,50 @@
+import java.util.Arrays;
+
+public class LinearRegression {
+    private double[] x;
+    private double[] y;
+    private double slope;
+    private double intercept;
+
+    public LinearRegression(double[] x, double[] y) {
+        if (x.length != y.length) {
+            throw new IllegalArgumentException("Input arrays must have the same length");
+        }
+        this.x = x;
+        this.y = y;
+        fit();
+    }
+
+    private void fit() {
+        double xMean = Arrays.stream(x).average().orElseThrow();
+        double yMean = Arrays.stream(y).average().orElseThrow();
+
+        double numerator = 0;
+        double denominator = 0;
+
+        for (int i = 0; i < x.length; i++) {
+            numerator += (x[i] - xMean) * (y[i] - yMean);
+            denominator += Math.pow(x[i] - xMean, 2);
+        }
+
+        slope = numerator / denominator;
+        intercept = yMean - slope * xMean;
+    }
+
+    public double predict(double xInput) {
+        return slope * xInput + intercept;
+    }
+
+    public static void main(String[] args) {
+        double[] x = {1, 2, 3, 4, 5};
+        double[] y = {2, 4, 5, 4, 5};
+
+        LinearRegression model = new LinearRegression(x, y);
+
+        System.out.println("Slope: " + model.slope);
+        System.out.println("Intercept: " + model.intercept);
+
+        double xInput = 6;
+        System.out.println("Predicted value for x=" + xInput + ": " + model.predict(xInput));
+    }
+}
